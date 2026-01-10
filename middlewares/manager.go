@@ -17,11 +17,6 @@ func MiddlewareManager() *Manager {
 func (mngr *Manager) With(next http.Handler, middlewares ...Middleware) http.Handler {
 		n := next
 
-		// for i := len(middlewares) - 1; i >= 0; i-- {
-		// 	middleware := middlewares[i]
-		// 	n = middleware(n)
-		// }
-
 		for _, middleware := range middlewares {
 			n = middleware(n)
 		}
