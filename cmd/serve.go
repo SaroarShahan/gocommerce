@@ -4,15 +4,17 @@ import (
 	"fmt"
 	"gocommerce/global_router"
 	"gocommerce/handlers"
+	"gocommerce/middlewares"
 	"net/http"
 )
 
 func Serve() {
+	manager := middlewares.MiddlewareManager()
 	mux := http.NewServeMux()
 
-	mux.Handle("GET /products", http.HandlerFunc(handlers.GetProducts))
-	mux.Handle("POST /products", http.HandlerFunc(handlers.CreateProduct))
-	mux.Handle("GET /products/{id}", http.HandlerFunc(handlers.GetProduct))
+	mux.Handle("GET /products", manager.With(http.HandlerFunc(handlers.GetProducts), middlewares.Logger))
+	mux.Handle("POST /products", manager.With(http.HandlerFunc(handlers.CreateProduct), middlewares.Logger))
+	mux.Handle("GET /products/{id}", manager.With(http.HandlerFunc(handlers.GetProduct), middlewares.Logger))
 
 	fmt.Println("Server started on port 8080")
 
