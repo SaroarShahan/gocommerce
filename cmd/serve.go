@@ -3,11 +3,14 @@ package cmd
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 
+	"gocommerce/config"
 	"gocommerce/middlewares"
 )
 
 func Serve() {
+	config := config.GetConfig()
 	manager := middlewares.MiddlewareManager()
 	manager.Use(middlewares.Preflight, middlewares.Cors, middlewares.Logger)
 	
@@ -16,9 +19,10 @@ func Serve() {
 
 	initRoutes(mux, manager)
 	
-	fmt.Println("Server started on port 8080")
+	addr := ":" + strconv.Itoa(config.HttpPort)
+	fmt.Println("Server started on port", config.HttpPort)
 	
-	err := http.ListenAndServe(":8080", wrappedMux)
+	err := http.ListenAndServe(addr, wrappedMux)
 	
 	if err != nil {
 		fmt.Println("Error starting server:", err)
