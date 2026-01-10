@@ -14,11 +14,19 @@ func MiddlewareManager() *Manager {
 	}
 }
 
+func (mngr *Manager) Use(middlewares ...Middleware) {
+	mngr.middlewares = append(mngr.middlewares, middlewares...)
+}
+
 func (mngr *Manager) With(next http.Handler, middlewares ...Middleware) http.Handler {
 		n := next
 
 		for _, middleware := range middlewares {
 			n = middleware(n)
+		}
+
+		for _, globalMiddleware := range mngr.middlewares {
+			n = globalMiddleware(n)
 		}
 
 		return n
